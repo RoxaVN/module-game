@@ -1,1 +1,7 @@
-# module-game
+# @roxavn/module-game
+
+## Release
+
+```
+npx standard-version
+```
