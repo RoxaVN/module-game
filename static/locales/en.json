@@ -1,6 +1,7 @@
 {
   "Error": {
-    "FullGameRoomException": "Room is full"
+    "FullGameRoomException": "Room is full",
+    "AlreadyInGameRoomException": "Already in game room exception"
   },
   "Meta": {
     "name": "Module game",

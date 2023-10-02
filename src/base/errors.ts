@@ -9,3 +9,12 @@ export class FullGameRoomException extends BadRequestException {
     } as I18nErrorField,
   };
 }
+
+export class AlreadyInGameRoomException extends BadRequestException {
+  i18n = {
+    default: {
+      key: 'Error.AlreadyInGameRoomException',
+      ns: baseModule.escapedName,
+    } as I18nErrorField,
+  };
+}

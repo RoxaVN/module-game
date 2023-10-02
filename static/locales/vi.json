@@ -1,6 +1,7 @@
 {
   "Error": {
-    "FullGameRoomException": "Phòng hết chỗ"
+    "FullGameRoomException": "Phòng hết chỗ",
+    "AlreadyInGameRoomException": "Lỗi đã ở trong phòng"
   },
   "Meta": {
     "name": "Module trò chơi",
