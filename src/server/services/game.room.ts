@@ -1,20 +1,14 @@
+import { InferApiRequest } from '@roxavn/core';
 import { InjectDatabaseService } from '@roxavn/core/server';
 import { Raw } from 'typeorm';
 
 import { serverModule } from '../module.js';
-import { GameRoom } from '../entities/game.room.entity.js';
+import { GameRoom } from '../entities/index.js';
+import { gameRoomApi } from '../../base/index.js';
 
-@serverModule.injectable()
-export class CreateGameRoomService extends InjectDatabaseService {
-  async handle(request: {
-    game: string;
-    userId?: string;
-    name?: string;
-    mode?: string;
-    private?: boolean;
-    locked?: boolean;
-    metadata?: Record<string, any>;
-  }) {
+@serverModule.useApi(gameRoomApi.create)
+export class CreateGameRoomApiService extends InjectDatabaseService {
+  async handle(request: InferApiRequest<typeof gameRoomApi.create>) {
     const item = new GameRoom();
     Object.assign(item, request);
 
@@ -23,17 +17,26 @@ export class CreateGameRoomService extends InjectDatabaseService {
   }
 }
 
-@serverModule.injectable()
-export class GetGameRoomSservice extends InjectDatabaseService {
-  async handle(request: {
-    game: string;
-    page?: number;
-    pageSize?: number;
-    mode?: string;
-    private?: boolean;
-    locked?: boolean;
-    isAvailable?: boolean;
-  }) {
+@serverModule.useApi(gameRoomApi.update)
+export class UpdateGameRoomApiService extends InjectDatabaseService {
+  async handle(request: InferApiRequest<typeof gameRoomApi.update>) {
+    await this.entityManager.getRepository(GameRoom).update(
+      { id: request.gameRoomId },
+      {
+        name: request.name,
+        mode: request.mode,
+        private: request.private,
+        locked: request.locked,
+        metadata: request.metadata,
+      }
+    );
+    return {};
+  }
+}
+
+@serverModule.useApi(gameRoomApi.getMany)
+export class GetGameRoomsApiService extends InjectDatabaseService {
+  async handle(request: InferApiRequest<typeof gameRoomApi.getMany>) {
     const page = request.page || 1;
     const pageSize = request.pageSize || 10;
 
@@ -60,36 +63,12 @@ export class GetGameRoomSservice extends InjectDatabaseService {
   }
 }
 
-@serverModule.injectable()
-export class UpdateGameRoomservice extends InjectDatabaseService {
-  async handle(request: {
-    gameRoomId: string;
-    name?: string;
-    mode?: string;
-    private?: boolean;
-    locked?: boolean;
-    metadata?: Record<string, any>;
-  }) {
-    await this.entityManager.getRepository(GameRoom).update(
-      { id: request.gameRoomId },
-      {
-        name: request.name,
-        mode: request.mode,
-        private: request.private,
-        locked: request.locked,
-        metadata: request.metadata,
-      }
-    );
-    return {};
-  }
-}
-
-@serverModule.injectable()
-export class DeleteGameRoomservice extends InjectDatabaseService {
-  async handle(request: { gameRoomId: string }) {
-    await this.entityManager.getRepository(GameRoom).delete({
-      id: request.gameRoomId,
-    });
+@serverModule.useApi(gameRoomApi.delete)
+export class DeleteGameRoomApiService extends InjectDatabaseService {
+  async handle(request: InferApiRequest<typeof gameRoomApi.delete>) {
+    await this.entityManager
+      .getRepository(GameRoom)
+      .delete({ id: request.gameRoomId });
     return {};
   }
 }
