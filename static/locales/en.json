@@ -1,4 +1,7 @@
 {
+  "Error": {
+    "FullGameRoomException": "Room is full"
+  },
   "Meta": {
     "name": "Module game",
     "description": "Module game"

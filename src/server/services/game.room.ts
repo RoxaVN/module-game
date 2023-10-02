@@ -1,4 +1,6 @@
 import { InjectDatabaseService } from '@roxavn/core/server';
+import { Raw } from 'typeorm';
+
 import { serverModule } from '../module.js';
 import { GameRoom } from '../entities/game.room.entity.js';
 
@@ -30,6 +32,7 @@ export class GetGameRoomSservice extends InjectDatabaseService {
     mode?: string;
     private?: boolean;
     locked?: boolean;
+    isAvailable?: boolean;
   }) {
     const page = request.page || 1;
     const pageSize = request.pageSize || 10;
@@ -42,6 +45,9 @@ export class GetGameRoomSservice extends InjectDatabaseService {
           mode: request.mode,
           locked: request.locked,
           private: request.private,
+          maxUsers: request.isAvailable
+            ? Raw((alias) => `${alias} = 0 OR ${alias} > userCount`)
+            : undefined,
         },
         take: pageSize,
         skip: (page - 1) * pageSize,
