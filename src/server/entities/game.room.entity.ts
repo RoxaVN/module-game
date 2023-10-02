@@ -18,6 +18,10 @@ export class GameRoom {
   id: string;
 
   @Index()
+  @Column('uuid', { nullable: true })
+  userId?: string;
+
+  @Index()
   @Column({ type: 'varchar', length: 256 })
   game: string;
 

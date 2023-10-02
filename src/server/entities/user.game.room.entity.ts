@@ -26,7 +26,9 @@ export class UserGameRoom {
   @Column('uuid')
   gameRoomId: string;
 
-  @ManyToOne(() => GameRoom, (gameRoom) => gameRoom.userGameRooms)
+  @ManyToOne(() => GameRoom, (gameRoom) => gameRoom.userGameRooms, {
+    onDelete: 'CASCADE',
+  })
   gameRoom: Relation<GameRoom>;
 
   @Column({ type: 'jsonb', nullable: true })
