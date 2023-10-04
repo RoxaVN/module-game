@@ -105,14 +105,21 @@ export class DeleteGameRoomRequest extends ExactProps<DeleteGameRoomRequest> {
   public readonly gameRoomId: string;
 }
 
+export class GetGameRoomRequest extends ExactProps<GetGameRoomRequest> {
+  @MinLength(1)
+  public readonly gameRoomId: string;
+}
+
 export const gameRoomApi = {
+  getOne: gameRoomSource.getOne({
+    validator: GetGameRoomRequest,
+  }),
   delete: gameRoomSource.delete({
     validator: DeleteGameRoomRequest,
     permission: permissions.DeleteGameRoom,
   }),
   getMany: gameRoomSource.getMany({
     validator: GetGameRoomsRequest,
-    permission: permissions.ReadGameRooms,
   }),
   update: gameRoomSource.update({
     validator: UpdateGameRoomRequest,

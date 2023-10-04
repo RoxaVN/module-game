@@ -8,7 +8,6 @@ export const scopes = accessManager.makeScopes(baseModule, {
 
 export const permissions = accessManager.makePermissions(scopes, {
   DeleteGameRoom: {},
-  ReadGameRooms: {},
   UpdateGameRoom: {},
   CreateGameRoom: {},
 });

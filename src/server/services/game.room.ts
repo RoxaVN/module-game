@@ -1,4 +1,4 @@
-import { InferApiRequest } from '@roxavn/core';
+import { InferApiRequest, NotFoundException } from '@roxavn/core';
 import { InjectDatabaseService } from '@roxavn/core/server';
 import { Raw } from 'typeorm';
 
@@ -70,5 +70,20 @@ export class DeleteGameRoomApiService extends InjectDatabaseService {
       .getRepository(GameRoom)
       .delete({ id: request.gameRoomId });
     return {};
+  }
+}
+
+@serverModule.useApi(gameRoomApi.getOne)
+export class GetGameRoomApiService extends InjectDatabaseService {
+  async handle(request: InferApiRequest<typeof gameRoomApi.getOne>) {
+    const item = await this.entityManager.getRepository(GameRoom).findOne({
+      cache: true,
+      where: { id: request.gameRoomId },
+    });
+
+    if (item) {
+      return item;
+    }
+    throw new NotFoundException();
   }
 }
