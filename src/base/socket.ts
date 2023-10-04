@@ -29,11 +29,28 @@ export interface ClientToServerLobbyEvents {
     ack: (resp: FullApiResponse<RoomResponse>) => void
   ) => void;
   joinRoom: (
-    request: { gameRoomId: string },
+    request: { roomId: string },
     ack: (resp: FullApiResponse<any>) => void
   ) => void;
   leaveRoom: (
-    request: { gameRoomId: string },
+    request: { roomId: string },
+    ack: (resp: FullApiResponse<any>) => void
+  ) => void;
+  createRoom: (
+    request: {
+      name?: string;
+      mode?: string;
+      private?: boolean;
+    },
+    ack: (resp: FullApiResponse<{ id: string }>) => void
+  ) => void;
+  updateRoom: (
+    request: {
+      roomId: string;
+      name?: string;
+      mode?: string;
+      private?: boolean;
+    },
     ack: (resp: FullApiResponse<any>) => void
   ) => void;
 }
@@ -41,4 +58,5 @@ export interface ClientToServerLobbyEvents {
 export interface ServerToClientLobbyEvents {
   updateRoom: (room: RoomResponse) => void;
   createRoom: (room: RoomResponse) => void;
+  deleteRoom: (roomId: string) => void;
 }

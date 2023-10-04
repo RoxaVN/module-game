@@ -13,7 +13,7 @@ export class CreateGameRoomApiService extends InjectDatabaseService {
     Object.assign(item, request);
 
     await this.entityManager.getRepository(GameRoom).insert(item);
-    return { id: item.id };
+    return item;
   }
 }
 

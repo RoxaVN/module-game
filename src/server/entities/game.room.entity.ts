@@ -31,7 +31,7 @@ export class GameRoom {
   @Column('int', { default: 0 })
   userCount: number;
 
-  @Column('text', { default: '' })
+  @Column('varchar', { default: '', length: 256 })
   name: string;
 
   @Column('text', { default: GameRoom.MODE_DEFAULT })

@@ -3,6 +3,7 @@ import {
   ExactProps,
   IsOptional,
   Max,
+  MaxLength,
   Min,
   MinLength,
   TransformBoolean,
@@ -26,6 +27,7 @@ export class CreateGameRoomRequest extends ExactProps<CreateGameRoomRequest> {
   @IsOptional()
   userId?: string;
 
+  @MaxLength(256)
   @IsOptional()
   name?: string;
 
@@ -48,6 +50,7 @@ export class UpdateGameRoomRequest extends ExactProps<UpdateGameRoomRequest> {
   @MinLength(1)
   public readonly gameRoomId: string;
 
+  @MaxLength(256)
   @IsOptional()
   name?: string;
 
