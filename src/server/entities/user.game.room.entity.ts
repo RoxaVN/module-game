@@ -6,10 +6,12 @@ import {
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 import { GameRoom } from './game.room.entity.js';
 
 @Entity()
+@Unique(['userId', 'gameRoomId'])
 export class UserGameRoom {
   @PrimaryGeneratedColumn('uuid')
   id: string;
