@@ -6,7 +6,7 @@ import {
   webModule as coreWebModule,
   utils,
 } from '@roxavn/core/web';
-import { IconDoorEnter, IconLock } from '@tabler/icons-react';
+import { IconDoorEnter } from '@tabler/icons-react';
 
 import { gameRoomApi } from '../../base/index.js';
 import { webModule } from '../module.js';
@@ -27,7 +27,7 @@ const Page = () => {
           render: (v, item) => v + ' / ' + item.maxUsers,
         },
         private: { label: tCore('private'), render: utils.Render.boolean },
-        locked: { label: <IconLock />, render: utils.Render.boolean },
+        locked: { label: '🔒', render: utils.Render.boolean },
         updatedDate: {
           label: tCore('updatedDate'),
           render: utils.Render.relativeTime,
