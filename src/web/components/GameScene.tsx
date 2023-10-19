@@ -1,5 +1,5 @@
 import { Stage } from '@pixi/react';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, cloneElement, useEffect, useState } from 'react';
 
 export interface GameSceneProps {
   width: number;
@@ -9,7 +9,7 @@ export interface GameSceneProps {
   /** Transparency of the background color, value from 0 (fully transparent) to 1 (fully opaque) */
   backgroundAlpha?: number;
   children: React.ReactNode;
-  domChildren?: React.ReactNode;
+  domChildren?: React.ReactElement[];
   fitWindow?: boolean;
 }
 
@@ -75,7 +75,14 @@ export function GameScene({
           pointerEvents: 'none',
         }}
       >
-        {domChildren}
+        {domChildren?.map((domChild, index) => {
+          const style = {
+            ...domChild.props.style,
+            position: 'absolute',
+            pointerEvents: 'auto',
+          };
+          return cloneElement(domChild, { key: index, style });
+        })}
       </div>
     </div>
   );
