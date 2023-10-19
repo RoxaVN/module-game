@@ -1,4 +1,7 @@
 {
+  "rooms": "Rooms",
+  "game": "Game",
+  "mode": "Mode",
   "Error": {
     "FullGameRoomException": "Room is full",
     "AlreadyInGameRoomException": "Already in game room exception"

@@ -13,7 +13,20 @@ import {
 import { baseModule } from '../module.js';
 import { permissions, scopes } from '../access.js';
 
-export interface GameRoomResponse {}
+export interface GameRoomResponse {
+  id: string;
+  userId?: string;
+  game: string;
+  maxUsers: number;
+  userCount: number;
+  name: string;
+  mode: string;
+  private: boolean;
+  locked: boolean;
+  metadata?: Record<string, any>;
+  createdDate: Date;
+  updatedDate: Date;
+}
 
 const gameRoomSource = new ApiSource<GameRoomResponse>(
   [scopes.GameRoom],
@@ -82,7 +95,8 @@ export class GetGameRoomsRequest extends ExactProps<GetGameRoomsRequest> {
   public readonly pageSize?: number;
 
   @MinLength(1)
-  public readonly game: string;
+  @IsOptional()
+  public readonly game?: string;
 
   @IsOptional()
   mode?: string;

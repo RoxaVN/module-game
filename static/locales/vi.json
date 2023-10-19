@@ -1,4 +1,7 @@
 {
+  "rooms": "Phòng chơi",
+  "game": "Trò chơi",
+  "mode": "Chế độ",
   "Error": {
     "FullGameRoomException": "Phòng hết chỗ",
     "AlreadyInGameRoomException": "Lỗi đã ở trong phòng"
