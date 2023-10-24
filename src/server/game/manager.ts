@@ -19,4 +19,9 @@ export abstract class ServerGameManager {
     );
     return result as string;
   }
+
+  async restore() {
+    const state = await this.getCurrentState();
+    await this.setState(state as any);
+  }
 }

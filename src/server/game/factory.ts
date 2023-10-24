@@ -4,19 +4,16 @@ import {
   makeSocketContextDecorator,
 } from '@roxavn/module-socket/server';
 
-import { serverModule } from '../module.js';
 import { ServerGameManager } from './manager.js';
 import { ServerGamePresence } from './presence.js';
 
-@serverModule.injectable()
 export class ServerGameFactory extends ServerSocketNamespace {
   static games: Record<string, { new (...args: any[]): ServerGameManager }> =
     {};
+  static presences: Record<string, ServerGamePresence> = {};
+  static managers: Record<string, ServerGameManager> = {};
 
-  presences: Record<string, ServerGamePresence> = {};
-  managers: Record<string, ServerGameManager> = {};
-
-  async getGamePresence(roomId: string) {
+  static async getGamePresence(roomId: string) {
     if (!(roomId in this.presences)) {
       const service = await serviceContainer.getAsync(ServerGamePresence);
       service.roomId = roomId;
@@ -25,9 +22,9 @@ export class ServerGameFactory extends ServerSocketNamespace {
     return this.presences[roomId];
   }
 
-  async getGameManager(roomId: string) {
+  static async getGameManager(game: string, roomId: string) {
     if (!(roomId in this.managers)) {
-      const service = await serviceContainer.getAsync(ServerGameManager);
+      const service = await serviceContainer.getAsync(this.games[game]);
       service.gamePresence = await this.getGamePresence(roomId);
       this.managers[roomId] = service;
     }
@@ -36,7 +33,7 @@ export class ServerGameFactory extends ServerSocketNamespace {
 
   useGame() {
     return (serviceClass: { new (...args: any[]): ServerGameManager }) => {
-      this.serverModule.injectable()(serviceClass);
+      this.serverModule.injectable({ scope: 'Transient' })(serviceClass);
       ServerGameFactory.games[this.name] = serviceClass;
     };
   }
@@ -66,7 +63,7 @@ export class ServerGameFactory extends ServerSocketNamespace {
                 );
               }
             }
-            const service = await this.getGamePresence(roomId);
+            const service = await ServerGameFactory.getGamePresence(roomId);
             return service;
           }
           throw new Error(
