@@ -2,7 +2,7 @@ import { PresenceService, inject } from '@roxavn/core/server';
 import { serverModule } from '../module.js';
 
 @serverModule.injectable({ scope: 'Transient' })
-export class ServerGamePresence {
+export class ServerGameStorage {
   presence: PresenceService['implementer'];
   roomId: string;
 

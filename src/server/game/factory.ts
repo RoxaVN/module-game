@@ -5,21 +5,21 @@ import {
 } from '@roxavn/module-socket/server';
 
 import { ServerGameManager } from './manager.js';
-import { ServerGamePresence } from './presence.js';
+import { ServerGameStorage } from './storage.js';
 
 export class ServerGameFactory extends ServerSocketNamespace {
   static games: Record<string, { new (...args: any[]): ServerGameManager }> =
     {};
-  static presences: Record<string, ServerGamePresence> = {};
+  static storages: Record<string, ServerGameStorage> = {};
   static managers: Record<string, ServerGameManager> = {};
 
   static async getGamePresence(roomId: string) {
-    if (!(roomId in this.presences)) {
-      const service = await serviceContainer.getAsync(ServerGamePresence);
+    if (!(roomId in this.storages)) {
+      const service = await serviceContainer.getAsync(ServerGameStorage);
       service.roomId = roomId;
-      this.presences[roomId] = service;
+      this.storages[roomId] = service;
     }
-    return this.presences[roomId];
+    return this.storages[roomId];
   }
 
   static async getGameManager(game: string, roomId: string) {
@@ -35,7 +35,7 @@ export class ServerGameFactory extends ServerSocketNamespace {
     const gamePresence = await ServerGameFactory.getGamePresence(roomId);
     await gamePresence.dispose();
     delete this.managers[roomId];
-    delete this.presences[roomId];
+    delete this.storages[roomId];
   }
 
   useGame() {
@@ -45,13 +45,13 @@ export class ServerGameFactory extends ServerSocketNamespace {
     };
   }
 
-  injectPresence = (options?: {
+  injectStore = (options?: {
     /**
      * Throw error if socket didn't join room
      */
     checkSocket?: boolean;
   }) => {
-    const result: ContextDecorator<ServerGamePresence> = (
+    const result: ContextDecorator<ServerGameStorage> = (
       target,
       propertyKey,
       parameterIndex
