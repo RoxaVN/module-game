@@ -5,6 +5,7 @@ import { Raw } from 'typeorm';
 import { serverModule } from '../module.js';
 import { GameRoom } from '../entities/index.js';
 import { gameRoomApi } from '../../base/index.js';
+import { ServerGameFactory } from '../game/factory.js';
 
 @serverModule.useApi(gameRoomApi.create)
 export class CreateGameRoomApiService extends InjectDatabaseService {
@@ -69,6 +70,7 @@ export class DeleteGameRoomApiService extends InjectDatabaseService {
     await this.entityManager
       .getRepository(GameRoom)
       .delete({ id: request.gameRoomId });
+    await ServerGameFactory.closeRoom(request.gameRoomId);
     return {};
   }
 }

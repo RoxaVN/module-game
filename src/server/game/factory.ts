@@ -31,6 +31,13 @@ export class ServerGameFactory extends ServerSocketNamespace {
     return this.managers[roomId];
   }
 
+  static async closeRoom(roomId: string) {
+    const gamePresence = await ServerGameFactory.getGamePresence(roomId);
+    await gamePresence.dispose();
+    delete this.managers[roomId];
+    delete this.presences[roomId];
+  }
+
   useGame() {
     return (serviceClass: { new (...args: any[]): ServerGameManager }) => {
       this.serverModule.injectable({ scope: 'Transient' })(serviceClass);
