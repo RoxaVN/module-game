@@ -12,7 +12,7 @@ export abstract class ServerGameManager {
       this.storage.getKey('state'),
       state as string
     );
-    (this[state] as any)();
+    return (this[state] as any)();
   }
 
   async getCurrentState() {
