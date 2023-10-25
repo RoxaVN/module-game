@@ -1,9 +1,11 @@
+import { SocketIoService } from '@roxavn/module-socket/server';
 import { serverModule } from '../module.js';
 import { ServerGameStorage } from './storage.js';
 
 @serverModule.injectable({ scope: 'Transient' })
 export abstract class ServerGameManager {
   storage: ServerGameStorage;
+  game: string;
 
   abstract init(): Promise<void>;
 
@@ -12,6 +14,9 @@ export abstract class ServerGameManager {
       this.storage.getKey('state'),
       state as string
     );
+    SocketIoService.getNamespace(this.game)
+      .to(this.storage.roomId)
+      .emit('updateState', { state });
     return (this[state] as any)();
   }
 

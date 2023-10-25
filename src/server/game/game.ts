@@ -1,9 +1,10 @@
+import { Constructor } from '@roxavn/core';
 import {
   ContextDecorator,
   ServerModule,
   serviceContainer,
 } from '@roxavn/core/server';
-import { BaseSocketNamespace, SocketEvents } from '@roxavn/module-socket/base';
+import { SocketEvents } from '@roxavn/module-socket/base';
 import {
   ServerSocketNamespace,
   makeSocketContextDecorator,
@@ -11,15 +12,16 @@ import {
 
 import { ServerGameManager } from './manager.js';
 import { ServerGameStorage } from './storage.js';
+import { BaseGame } from '../../base/index.js';
 
 export class ServerGame<
   C extends SocketEvents = SocketEvents,
   S extends SocketEvents = SocketEvents,
   E extends SocketEvents = SocketEvents,
   D = any,
+  States extends string = string,
 > extends ServerSocketNamespace<C, S, E, D> {
-  static games: Record<string, { new (...args: any[]): ServerGameManager }> =
-    {};
+  static games: Record<string, Constructor<ServerGameManager>> = {};
   static storages: Record<string, ServerGameStorage> = {};
   static managers: Record<string, ServerGameManager> = {};
 
@@ -37,6 +39,7 @@ export class ServerGame<
       const service: ServerGameManager = await serviceContainer.getAsync(
         this.games[game]
       );
+      service.game = game;
       service.storage = await this.getGameStorage(roomId);
       this.managers[roomId] = service;
     }
@@ -51,23 +54,26 @@ export class ServerGame<
   }
 
   static fromBase<
-    E extends SocketEvents = SocketEvents,
-    D = any,
     C extends SocketEvents = SocketEvents,
     S extends SocketEvents = SocketEvents,
+    E extends SocketEvents = SocketEvents,
+    D = any,
+    States extends string = string,
   >(
-    baseSocketNamespace: BaseSocketNamespace<C, S>,
+    baseGame: BaseGame<C, S, States>,
     serverModule: ServerModule
-  ): ServerGame<C, S, E, D> {
-    return new ServerGame(
-      baseSocketNamespace.name,
-      baseSocketNamespace.options,
-      serverModule
-    );
+  ): ServerGame<C, S, E, D, States> {
+    return new ServerGame(baseGame.name, baseGame.options, serverModule);
   }
 
   useGame() {
-    return (serviceClass: { new (...args: any[]): ServerGameManager }) => {
+    return (
+      serviceClass: Constructor<
+        ServerGameManager & {
+          [key in States]: () => Promise<void>;
+        }
+      >
+    ) => {
       this.serverModule.injectable({ scope: 'Transient' })(serviceClass);
       ServerGame.games[this.name] = serviceClass;
     };
