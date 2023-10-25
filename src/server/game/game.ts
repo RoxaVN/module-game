@@ -12,7 +12,7 @@ import {
 import { ServerGameManager } from './manager.js';
 import { ServerGameStorage } from './storage.js';
 
-export class ServerGameFactory<
+export class ServerGame<
   C extends SocketEvents = SocketEvents,
   S extends SocketEvents = SocketEvents,
   E extends SocketEvents = SocketEvents,
@@ -44,7 +44,7 @@ export class ServerGameFactory<
   }
 
   static async closeRoom(roomId: string) {
-    const gameStorage = await ServerGameFactory.getGameStorage(roomId);
+    const gameStorage = await ServerGame.getGameStorage(roomId);
     await gameStorage.dispose();
     delete this.managers[roomId];
     delete this.storages[roomId];
@@ -58,8 +58,8 @@ export class ServerGameFactory<
   >(
     baseSocketNamespace: BaseSocketNamespace<C, S>,
     serverModule: ServerModule
-  ): ServerGameFactory<C, S, E, D> {
-    return new ServerGameFactory(
+  ): ServerGame<C, S, E, D> {
+    return new ServerGame(
       baseSocketNamespace.name,
       baseSocketNamespace.options,
       serverModule
@@ -69,7 +69,7 @@ export class ServerGameFactory<
   useGame() {
     return (serviceClass: { new (...args: any[]): ServerGameManager }) => {
       this.serverModule.injectable({ scope: 'Transient' })(serviceClass);
-      ServerGameFactory.games[this.name] = serviceClass;
+      ServerGame.games[this.name] = serviceClass;
     };
   }
 
@@ -94,15 +94,15 @@ export class ServerGameFactory<
             if (options?.checkSocket) {
               if (!context.socket.rooms.has(roomId)) {
                 throw new Error(
-                  `[ServerGameFactory] socket didn't join room ${roomId}`
+                  `[ServerGame] socket didn't join room ${roomId}`
                 );
               }
             }
-            const service = await ServerGameFactory.getGameStorage(roomId);
+            const service = await ServerGame.getGameStorage(roomId);
             return service;
           }
           throw new Error(
-            '[ServerGameFactory] can get game presence of room undefined'
+            '[ServerGame] can get game presence of room undefined'
           );
         }
       );

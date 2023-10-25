@@ -1,4 +1,4 @@
-export * from './factory.js';
+export * from './game.js';
 export * from './manager.js';
 export * from './storage.js';
 export * from './bootstrap.js';
