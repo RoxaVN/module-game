@@ -111,6 +111,7 @@ export abstract class JoinGameRoomSocketService extends BaseService {
       }
       ack({ code: 200 });
       socket.leave('lobby');
+      socket.join(request.roomId);
     } catch (e: any) {
       ack(ServerModule.parseError(e));
     }
@@ -131,7 +132,8 @@ export abstract class LeaveGameRoomSocketService extends BaseService {
 
   async handle(
     [request, ack]: Parameters<ClientToServerLobbyEvents['leaveRoom']>,
-    @SocketAuthUser authUser: InferContext<typeof SocketAuthUser>
+    @SocketAuthUser authUser: InferContext<typeof SocketAuthUser>,
+    @SocketConnection socket: InferContext<typeof SocketConnection>
   ) {
     try {
       await this.leaveGameRoomService.handle({
@@ -141,6 +143,7 @@ export abstract class LeaveGameRoomSocketService extends BaseService {
       if (this.afterLeave) {
         await this.afterLeave(request.roomId, authUser.id);
       }
+      socket.leave(request.roomId);
       ack({ code: 200 });
     } catch (e: any) {
       ack(ServerModule.parseError(e));
