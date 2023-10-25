@@ -66,6 +66,10 @@ export class ServerGame<
     return new ServerGame(baseGame.name, baseGame.options, serverModule);
   }
 
+  broadcastOperator(manager: ServerGameManager) {
+    return this.namespace.to(manager.storage.roomId);
+  }
+
   useGame() {
     return (
       serviceClass: Constructor<
