@@ -12,14 +12,14 @@ import {
 
 import { ServerGameManager } from './manager.js';
 import { ServerGameStorage } from './storage.js';
-import { BaseGame } from '../../base/index.js';
+import { BaseGame, GameState } from '../../base/index.js';
 
 export class ServerGame<
   C extends SocketEvents = SocketEvents,
   S extends SocketEvents = SocketEvents,
   E extends SocketEvents = SocketEvents,
   D = any,
-  States extends string = string,
+  G extends GameState = GameState,
 > extends ServerSocketNamespace<C, S, E, D> {
   static games: Record<string, Constructor<ServerGameManager>> = {};
   static storages: Record<string, ServerGameStorage> = {};
@@ -58,11 +58,11 @@ export class ServerGame<
     S extends SocketEvents = SocketEvents,
     E extends SocketEvents = SocketEvents,
     D = any,
-    States extends string = string,
+    G extends GameState = GameState,
   >(
-    baseGame: BaseGame<C, S, States>,
+    baseGame: BaseGame<C, S, G>,
     serverModule: ServerModule
-  ): ServerGame<C, S, E, D, States> {
+  ): ServerGame<C, S, E, D, G> {
     return new ServerGame(baseGame.name, baseGame.options, serverModule);
   }
 
@@ -74,7 +74,7 @@ export class ServerGame<
     return (
       serviceClass: Constructor<
         ServerGameManager & {
-          [key in States]: () => Promise<void>;
+          [key in G['type']]: () => Promise<void>;
         }
       >
     ) => {
