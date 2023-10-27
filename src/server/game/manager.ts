@@ -11,7 +11,7 @@ export abstract class ServerGameManager {
 
   async setState(state: keyof this) {
     await this.storage.presence.set(
-      this.storage.getKey('state'),
+      this.storage.getKey('__state__'),
       state as string
     );
     SocketIoService.getNamespace(this.game)
@@ -22,7 +22,7 @@ export abstract class ServerGameManager {
 
   async getCurrentState() {
     const result = await this.storage.presence.get(
-      this.storage.getKey('state')
+      this.storage.getKey('__state__')
     );
     return result as string | undefined;
   }

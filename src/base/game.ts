@@ -1,8 +1,6 @@
 import { BaseSocketNamespace, SocketEvents } from '@roxavn/module-socket/base';
 
-export interface GameState {
-  type: string;
-}
+export type GameState = string;
 
 export class BaseGame<
   ClientToServer extends SocketEvents,

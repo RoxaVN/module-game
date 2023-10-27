@@ -74,7 +74,7 @@ export class ServerGame<
     return (
       serviceClass: Constructor<
         ServerGameManager & {
-          [key in G['type']]: () => Promise<void>;
+          [key in G]: () => Promise<void>;
         }
       >
     ) => {
