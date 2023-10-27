@@ -16,7 +16,7 @@ export abstract class ServerGameManager {
     );
     SocketIoService.getNamespace(this.game)
       .to(this.storage.roomId)
-      .emit('updateState', { state });
+      .emit('updateState', { state, roomId: this.storage.roomId });
     return (this[state] as any)();
   }
 

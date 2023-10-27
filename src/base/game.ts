@@ -6,7 +6,7 @@ export type ServerToClientEx<
   T extends SocketEvents,
   State extends GameState,
 > = T & {
-  updateState: (data: { state: State }) => void;
+  updateState: (data: { state: State; roomId: string }) => void;
 };
 
 export class BaseGame<
