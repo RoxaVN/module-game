@@ -1,15 +1,11 @@
-import { InjectDatabaseService, transactionUtils } from '@roxavn/core/server';
+import { InjectDatabaseService } from '@roxavn/core/server';
 import { Brackets } from 'typeorm';
 import { serverModule } from '../module.js';
 import { GameRoom, UserGameRoom } from '../entities/index.js';
-import {
-  AlreadyInGameRoomException,
-  FullGameRoomException,
-} from '../../base/index.js';
+import { FullGameRoomException } from '../../base/index.js';
 
 @serverModule.injectable()
 export class JoinGameRoomService extends InjectDatabaseService {
-  @transactionUtils.Transactional()
   async handle(request: { userId: string; gameRoomId: string }) {
     const result = await this.entityManager
       .getRepository(GameRoom)
@@ -31,15 +27,7 @@ export class JoinGameRoomService extends InjectDatabaseService {
       item.userId = request.userId;
       item.gameRoomId = request.gameRoomId;
       item.game = result.raw[0].game;
-      try {
-        await this.entityManager.getRepository(UserGameRoom).insert(item);
-      } catch (e) {
-        if (transactionUtils.isDuplicateKeyError(e)) {
-          throw new AlreadyInGameRoomException();
-        } else {
-          throw e;
-        }
-      }
+      await this.entityManager.getRepository(UserGameRoom).insert(item);
     } else {
       throw new FullGameRoomException();
     }
