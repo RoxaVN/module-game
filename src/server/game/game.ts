@@ -83,7 +83,7 @@ export class ServerGame<
     };
   }
 
-  injectStore = (options?: {
+  injectStorage = (options?: {
     /**
      * Throw error if socket didn't join room
      */
