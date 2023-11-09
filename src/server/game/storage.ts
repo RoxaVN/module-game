@@ -15,7 +15,7 @@ export class ServerGameStorage {
   getKey(key: string) {
     if (this.roomId) {
       const result = `gameRoom:${this.roomId}:${key}`;
-      this.presence.sadd(`gameRoom:${this.roomId}`, key);
+      this.presence.sAdd(`gameRoom:${this.roomId}`, key);
       return result;
     }
     throw new Error('[ServerGameData] must set roomId');
@@ -23,7 +23,7 @@ export class ServerGameStorage {
 
   async dispose() {
     if (this.roomId) {
-      const keys = await this.presence.smembers(`gameRoom:${this.roomId}`);
+      const keys = await this.presence.sMembers(`gameRoom:${this.roomId}`);
       keys.push(`gameRoom:${this.roomId}`);
       await Promise.all(keys.map((k) => this.presence.del(k)));
     }
