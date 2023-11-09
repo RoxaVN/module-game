@@ -21,6 +21,14 @@ export class ServerGameStorage {
     throw new Error('[ServerGameData] must set roomId');
   }
 
+  getGeneralKey() {
+    return this.getKey('general');
+  }
+
+  getGeneralData() {
+    return this.presence.jsonGet(this.getGeneralKey(), '$');
+  }
+
   async dispose() {
     if (this.roomId) {
       const keys = await this.presence.sMembers(`gameRoom:${this.roomId}`);

@@ -10,8 +10,9 @@ export abstract class ServerGameManager {
   abstract init(): Promise<void>;
 
   async setState(state: keyof this) {
-    await this.storage.presence.set(
-      this.storage.getKey('__state__'),
+    await this.storage.presence.jsonSet(
+      this.storage.getGeneralKey(),
+      '$.state',
       state as string
     );
     SocketIoService.getNamespace(this.game)
@@ -21,8 +22,9 @@ export abstract class ServerGameManager {
   }
 
   async getCurrentState() {
-    const result = await this.storage.presence.get(
-      this.storage.getKey('__state__')
+    const result = await this.storage.presence.jsonGet(
+      this.storage.getGeneralKey(),
+      '$.state'
     );
     return result as string | undefined;
   }
