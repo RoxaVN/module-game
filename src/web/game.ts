@@ -1,6 +1,6 @@
 import { SocketEvents } from '@roxavn/module-socket/base';
 import { WebSocketNamespace } from '@roxavn/module-socket/web';
-import { BaseGame, GameState, ServerToClientEx } from '../base/index.js';
+import { BaseGame, GameData, ServerToClientEx } from '../base/index.js';
 
 export class WebGame<
   C extends SocketEvents,
@@ -10,10 +10,17 @@ export class WebGame<
     return this.onEvent(event, { filter: (data) => data?.roomId === roomId });
   }
 
+  onGeneralData(roomId: string) {
+    return this.onEvent('updateGeneral', {
+      filter: (data) => data?.roomId === roomId,
+      merge: true,
+    });
+  }
+
   static fromBase<
     ClientToServer extends SocketEvents,
     ServerToClient extends SocketEvents,
-    Game extends GameState,
+    Game extends GameData,
   >(
     base: BaseGame<ClientToServer, ServerToClient, Game>
   ): WebGame<ClientToServer, ServerToClientEx<ServerToClient, Game>> {

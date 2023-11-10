@@ -25,10 +25,6 @@ export class ServerGameStorage {
     return this.getKey('general');
   }
 
-  getGeneralData() {
-    return this.presence.jsonGet(this.getGeneralKey(), '$');
-  }
-
   async dispose() {
     if (this.roomId) {
       const keys = await this.presence.sMembers(`gameRoom:${this.roomId}`);
