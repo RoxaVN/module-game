@@ -7,7 +7,7 @@
     "AlreadyInGameRoomException": "Already in game room exception"
   },
   "Meta": {
-    "name": "Module game",
-    "description": "Module game"
+    "name": "Game",
+    "description": "Game"
   }
 }

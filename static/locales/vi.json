@@ -7,7 +7,7 @@
     "AlreadyInGameRoomException": "Lỗi đã ở trong phòng"
   },
   "Meta": {
-    "name": "Module trò chơi",
-    "description": "Module trò chơi"
+    "name": "Trò chơi",
+    "description": "Trò chơi"
   }
 }
