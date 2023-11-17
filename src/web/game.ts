@@ -1,6 +1,13 @@
 import { SocketEvents } from '@roxavn/module-socket/base';
 import { WebSocketNamespace } from '@roxavn/module-socket/web';
-import { BaseGame, GameData, ServerToClientEx } from '../base/index.js';
+import { useEffect } from 'react';
+
+import {
+  BaseGame,
+  ClientToServerEx,
+  GameData,
+  ServerToClientEx,
+} from '../base/index.js';
 
 export class WebGame<
   C extends SocketEvents,
@@ -11,10 +18,21 @@ export class WebGame<
   }
 
   onGeneralData(roomId: string) {
-    return this.onEvent('updateGeneral', {
+    const result = this.onEvent('updateGeneral', {
       filter: (data) => data?.roomId === roomId,
       merge: true,
     });
+
+    useEffect(() => {
+      const socket: any = this.get();
+      socket.emit('getGeneral', { roomId }, (resp: any) => {
+        if (resp.data) {
+          result[1](resp.data);
+        }
+      });
+    }, []);
+
+    return result;
   }
 
   static fromBase<
@@ -23,7 +41,10 @@ export class WebGame<
     Game extends GameData,
   >(
     base: BaseGame<ClientToServer, ServerToClient, Game>
-  ): WebGame<ClientToServer, ServerToClientEx<ServerToClient, Game>> {
+  ): WebGame<
+    ClientToServerEx<ClientToServer, Game>,
+    ServerToClientEx<ServerToClient, Game>
+  > {
     return new WebGame(base.name, base.options);
   }
 }

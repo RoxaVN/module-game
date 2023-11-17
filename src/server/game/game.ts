@@ -12,7 +12,12 @@ import {
 
 import { ServerGameManager } from './manager.js';
 import { ServerGameStorage } from './storage.js';
-import { BaseGame, GameData, ServerToClientEx } from '../../base/index.js';
+import {
+  BaseGame,
+  ClientToServerEx,
+  GameData,
+  ServerToClientEx,
+} from '../../base/index.js';
 
 export class ServerGame<
   C extends SocketEvents = SocketEvents,
@@ -62,7 +67,7 @@ export class ServerGame<
   >(
     baseGame: BaseGame<C, S, G>,
     serverModule: ServerModule
-  ): ServerGame<C, ServerToClientEx<S, G>, E, D, G> {
+  ): ServerGame<ClientToServerEx<C, G>, ServerToClientEx<S, G>, E, D, G> {
     return new ServerGame(baseGame.name, baseGame.options, serverModule);
   }
 

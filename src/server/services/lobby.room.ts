@@ -1,4 +1,4 @@
-import { NotFoundException } from '@roxavn/core';
+import { FullApiResponse, NotFoundException } from '@roxavn/core';
 import {
   BaseService,
   type InferContext,
@@ -19,6 +19,7 @@ import {
   GetGameRoomsApiService,
 } from './game.room.js';
 import { JoinGameRoomService, LeaveGameRoomService } from './user.game.room.js';
+import { ServerGame } from '../game/game.js';
 
 @serverModule.injectable()
 export abstract class GetGameRoomsSocketService extends BaseService {
@@ -187,5 +188,27 @@ export abstract class CreateGameRoomSocketService extends BaseService {
     } catch (e: any) {
       ack(ServerModule.parseError(e));
     }
+  }
+}
+
+@serverModule.injectable()
+export abstract class GetGameRoomGeneralSocketService extends BaseService {
+  abstract game: string;
+
+  constructor(
+    @inject(CreateGameRoomApiService)
+    protected createGameRoomApiService: CreateGameRoomApiService
+  ) {
+    super();
+  }
+
+  async handle([request, ack]: [
+    { roomId: string },
+    (resp: FullApiResponse<any>) => void,
+  ]) {
+    const storage = await ServerGame.getGameStorage(request.roomId);
+    const result = await storage.presence.jsonGet(storage.getGeneralKey(), '$');
+
+    ack({ code: 200, data: result });
   }
 }
