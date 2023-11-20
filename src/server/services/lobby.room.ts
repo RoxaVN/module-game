@@ -13,7 +13,7 @@ import {
 } from '@roxavn/module-socket/server';
 
 import { serverModule } from '../module.js';
-import { ClientToServerLobbyEvents } from '../../base/socket.js';
+import { ClientToServerLobbyEvents, GameData } from '../../base/index.js';
 import {
   CreateGameRoomApiService,
   GetGameRoomsApiService,
@@ -187,20 +187,27 @@ export class CreateGameRoomSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export class GetGameRoomGeneralSocketService extends BaseService {
-  constructor(
-    @inject(CreateGameRoomApiService)
-    protected createGameRoomApiService: CreateGameRoomApiService
-  ) {
-    super();
-  }
+export class GetGameRoomGeneralSocketService<
+  T extends GameData = GameData,
+> extends BaseService {
+  parseData?: (
+    data: T,
+    context: { roomId: string; userId: string }
+  ) => Promise<void>;
 
-  async handle([request, ack]: [
-    { roomId: string },
-    (resp: FullApiResponse<any>) => void,
-  ]) {
+  async handle(
+    [request, ack]: [{ roomId: string }, (resp: FullApiResponse<T>) => void],
+    @SocketAuthUser authUser: InferContext<typeof SocketAuthUser>
+  ) {
     const storage = await ServerGame.getGameStorage(request.roomId);
     const result = await storage.presence.jsonGet(storage.getGeneralKey(), '$');
+
+    if (this.parseData) {
+      await this.parseData(result, {
+        roomId: request.roomId,
+        userId: authUser.id,
+      });
+    }
 
     ack({ code: 200, data: result });
   }
