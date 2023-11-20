@@ -19,12 +19,10 @@ import {
   GetGameRoomsApiService,
 } from './game.room.js';
 import { JoinGameRoomService, LeaveGameRoomService } from './user.game.room.js';
-import { ServerGame } from '../game/game.js';
+import { GameName, ServerGame } from '../game/index.js';
 
 @serverModule.injectable()
-export abstract class GetGameRoomsSocketService extends BaseService {
-  abstract game: string;
-
+export class GetGameRoomsSocketService extends BaseService {
   constructor(
     @inject(GetGameRoomsApiService)
     protected getGameRoomsApiService: GetGameRoomsApiService
@@ -34,10 +32,11 @@ export abstract class GetGameRoomsSocketService extends BaseService {
 
   async handle(
     [request, ack]: Parameters<ClientToServerLobbyEvents['getRooms']>,
-    @SocketConnection socket: InferContext<typeof SocketConnection>
+    @SocketConnection socket: InferContext<typeof SocketConnection>,
+    @GameName game: InferContext<typeof GameName>
   ) {
     const result = await this.getGameRoomsApiService.handle({
-      game: this.game,
+      game,
       ...request,
     });
     ack({
@@ -49,9 +48,7 @@ export abstract class GetGameRoomsSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export abstract class GetAvailableGameRoomSocketService extends BaseService {
-  abstract game: string;
-
+export class GetAvailableGameRoomSocketService extends BaseService {
   constructor(
     @inject(GetGameRoomsApiService)
     protected getGameRoomsApiService: GetGameRoomsApiService
@@ -59,11 +56,12 @@ export abstract class GetAvailableGameRoomSocketService extends BaseService {
     super();
   }
 
-  async handle([request, ack]: Parameters<
-    ClientToServerLobbyEvents['getAvailableRoom']
-  >) {
+  async handle(
+    [request, ack]: Parameters<ClientToServerLobbyEvents['getAvailableRoom']>,
+    @GameName game: InferContext<typeof GameName>
+  ) {
     const result = await this.getGameRoomsApiService.handle({
-      game: this.game,
+      game,
       ...request,
       pageSize: 1,
     });
@@ -83,8 +81,7 @@ export abstract class GetAvailableGameRoomSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export abstract class JoinGameRoomSocketService extends BaseService {
-  abstract game: string;
+export class JoinGameRoomSocketService extends BaseService {
   beforeJoin?: (roomId: string, userId: string) => Promise<void>;
   afterJoin?: (roomId: string, userId: string) => Promise<void>;
 
@@ -129,8 +126,7 @@ export abstract class JoinGameRoomSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export abstract class LeaveGameRoomSocketService extends BaseService {
-  abstract game: string;
+export class LeaveGameRoomSocketService extends BaseService {
   afterLeave?: (roomId: string, userId: string) => Promise<void>;
 
   constructor(
@@ -162,9 +158,7 @@ export abstract class LeaveGameRoomSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export abstract class CreateGameRoomSocketService extends BaseService {
-  abstract game: string;
-
+export class CreateGameRoomSocketService extends BaseService {
   constructor(
     @inject(CreateGameRoomApiService)
     protected createGameRoomApiService: CreateGameRoomApiService
@@ -175,11 +169,12 @@ export abstract class CreateGameRoomSocketService extends BaseService {
   async handle(
     [request, ack]: Parameters<ClientToServerLobbyEvents['createRoom']>,
     @SocketAuthUser authUser: InferContext<typeof SocketAuthUser>,
-    @SocketNamespace socketNamespace: InferContext<typeof SocketNamespace>
+    @SocketNamespace socketNamespace: InferContext<typeof SocketNamespace>,
+    @GameName game: InferContext<typeof GameName>
   ) {
     try {
       const result = await this.createGameRoomApiService.handle({
-        game: this.game,
+        game,
         userId: authUser.id,
         ...request,
       });
@@ -192,9 +187,7 @@ export abstract class CreateGameRoomSocketService extends BaseService {
 }
 
 @serverModule.injectable()
-export abstract class GetGameRoomGeneralSocketService extends BaseService {
-  abstract game: string;
-
+export class GetGameRoomGeneralSocketService extends BaseService {
   constructor(
     @inject(CreateGameRoomApiService)
     protected createGameRoomApiService: CreateGameRoomApiService
