@@ -25,7 +25,7 @@ export class ServerGame<
   E extends SocketEvents = SocketEvents,
   D = any,
   G extends GameData = GameData,
-> extends ServerSocketNamespace<C, S, E, D> {
+> extends BaseGame<C, S, G> {
   static games: Record<string, Constructor<ServerGameManager>> = {};
   static storages: Record<string, ServerGameStorage> = {};
   static managers: Record<string, ServerGameManager> = {};
@@ -68,11 +68,25 @@ export class ServerGame<
     baseGame: BaseGame<C, S, G>,
     serverModule: ServerModule
   ): ServerGame<ClientToServerEx<C, G>, ServerToClientEx<S, G>, E, D, G> {
-    return new ServerGame(baseGame.name, baseGame.options, serverModule);
+    return new ServerGame(baseGame.name, serverModule);
+  }
+
+  public readonly serverIO: ServerSocketNamespace<C, S, E, D>;
+
+  constructor(
+    name: string,
+    protected serverModule: ServerModule
+  ) {
+    super(name);
+    this.serverIO = new ServerSocketNamespace(
+      name,
+      this.baseIO.options,
+      serverModule
+    );
   }
 
   broadcastOperator(manager: ServerGameManager) {
-    return this.namespace.to(manager.storage.roomId);
+    return this.serverIO.namespace.to(manager.storage.roomId);
   }
 
   useGame() {

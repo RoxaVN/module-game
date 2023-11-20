@@ -12,19 +12,22 @@ import {
 export class WebGame<
   C extends SocketEvents,
   S extends SocketEvents,
-> extends WebSocketNamespace<C, S> {
+  G extends GameData,
+> extends BaseGame<C, S, G> {
   onRoomEvent<K extends keyof S>(event: K, roomId: string) {
-    return this.onEvent(event, { filter: (data) => data?.roomId === roomId });
+    return this.webIO.onEvent(event, {
+      filter: (data) => data?.roomId === roomId,
+    });
   }
 
   onGeneralData(roomId: string) {
-    const result = this.onEvent('updateGeneral', {
+    const result = this.webIO.onEvent('updateGeneral', {
       filter: (data) => data?.roomId === roomId,
       merge: true,
     });
 
     useEffect(() => {
-      const socket: any = this.get();
+      const socket: any = this.webIO.get();
       socket.emit('getGeneral', { roomId }, (resp: any) => {
         if (resp.data) {
           result[1](resp.data);
@@ -35,6 +38,13 @@ export class WebGame<
     return result;
   }
 
+  public readonly webIO: WebSocketNamespace<C, S>;
+
+  constructor(name: string) {
+    super(name);
+    this.webIO = new WebSocketNamespace(name, this.baseIO.options);
+  }
+
   static fromBase<
     ClientToServer extends SocketEvents,
     ServerToClient extends SocketEvents,
@@ -43,8 +53,9 @@ export class WebGame<
     base: BaseGame<ClientToServer, ServerToClient, Game>
   ): WebGame<
     ClientToServerEx<ClientToServer, Game>,
-    ServerToClientEx<ServerToClient, Game>
+    ServerToClientEx<ServerToClient, Game>,
+    Game
   > {
-    return new WebGame(base.name, base.options);
+    return new WebGame(base.name);
   }
 }

@@ -31,7 +31,13 @@ export class BaseGame<
   ClientToServer extends SocketEvents,
   ServerToClient extends SocketEvents,
   Generaldata extends GameData,
-> extends BaseSocketNamespace<
-  ClientToServerEx<ClientToServer, Generaldata>,
-  ServerToClientEx<ServerToClient, Generaldata>
-> {}
+> {
+  public readonly baseIO: BaseSocketNamespace<
+    ClientToServerEx<ClientToServer, Generaldata>,
+    ServerToClientEx<ServerToClient, Generaldata>
+  >;
+
+  constructor(public readonly name: string) {
+    this.baseIO = new BaseSocketNamespace(name, { needAuth: true });
+  }
+}
