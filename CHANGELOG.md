@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/RoxaVN/roxavn/compare/v0.1.0...v0.1.1) (2023-11-21)
+
+### Features
+
+- add GameName decorator ([71e8095](https://github.com/RoxaVN/roxavn/commit/71e809561ede2c8142f56be23fc267a05f954ca7))
+- add GetGameRoomGeneralSocketService ([d443f50](https://github.com/RoxaVN/roxavn/commit/d443f50e7782b5fbf5c516b9d593a2e4270babc4))
+- add parseData to GetGameRoomGeneralSocketService ([08d2a24](https://github.com/RoxaVN/roxavn/commit/08d2a2466c889c2d62f472259545cf9fbf3fe1f1))
+- create baseIO in BaseGame instead of inherit from BaseSocketNamespace ([c8743d3](https://github.com/RoxaVN/roxavn/commit/c8743d3e0964bb874d9d5b97887959aee4d8ac89))
+
 ## 0.1.0 (2023-11-11)
 
 ### Features
