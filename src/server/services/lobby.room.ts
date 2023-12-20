@@ -4,7 +4,7 @@ import {
   type InferContext,
   inject,
   ServerModule,
-  transactionUtils,
+  databaseUtils,
 } from '@roxavn/core/server';
 import {
   SocketAuthUser,
@@ -102,14 +102,14 @@ export class JoinGameRoomSocketService extends BaseService {
         await this.beforeJoin(request.roomId, authUser.id);
       }
       try {
-        await transactionUtils.runInTransaction(() => {
+        await databaseUtils.runInTransaction(() => {
           return this.ioinGameRoomService.handle({
             userId: authUser.id,
             gameRoomId: request.roomId,
           });
         });
       } catch (e) {
-        if (!transactionUtils.isDuplicateKeyError(e)) {
+        if (!databaseUtils.isDuplicateKeyError(e)) {
           throw e;
         }
       }
