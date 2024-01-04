@@ -2,12 +2,10 @@ import {
   ApiSource,
   ExactProps,
   IsOptional,
-  Max,
   MaxLength,
-  Min,
   MinLength,
+  PaginationRequest,
   TransformBoolean,
-  TransformNumber,
 } from '@roxavn/core/base';
 
 import { baseModule } from '../module.js';
@@ -82,18 +80,7 @@ export class UpdateGameRoomRequest extends ExactProps<UpdateGameRoomRequest> {
   metadata?: Record<string, any>;
 }
 
-export class GetGameRoomsRequest extends ExactProps<GetGameRoomsRequest> {
-  @Min(1)
-  @TransformNumber()
-  @IsOptional()
-  public readonly page?: number;
-
-  @Min(1)
-  @Max(100)
-  @TransformNumber()
-  @IsOptional()
-  public readonly pageSize?: number;
-
+export class GetGameRoomsRequest extends PaginationRequest<GetGameRoomsRequest> {
   @MinLength(1)
   @IsOptional()
   public readonly game?: string;
